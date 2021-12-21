@@ -7,11 +7,11 @@
 
   linux:
 
-    debian: `sudo apt install python3`
+    debian: sudo apt install python3
 
-    fedora: `sudo dnf install python3`
+    fedora: sudo dnf install python3
 
-    arch: `sudo pacman -S python3`
+    arch: sudo pacman -S python3
 
 2 open terminal/command prompt(cmd)
 
