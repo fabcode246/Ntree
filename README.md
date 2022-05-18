@@ -13,17 +13,15 @@
 
     arch: sudo pacman -S python3
 
-2 `pip install pymongo`
+2 open terminal/command prompt(cmd)
 
-3 open terminal/command prompt(cmd)
+3 `git clone https://github.com/fabcode246/Ntree/`
 
-4 `git clone https://github.com/fabcode246/Ntree/`
+4 `cd Ntree/`
 
-5 `cd Ntree/`
+5 `python3 makedatabase.py`
 
-6 `python3 makedatabase.py`
+6 `alias ntree="python3 diary.py"`(if linux only)
 
-7 `alias ntree="python3 diary.py"`(if linux only)
-
-8 `ntree -h` (replace `ntree` with `python3 main.py` if you haven't done step 6)
+7 `ntree -h` (replace `ntree` with `python3 main.py` if you haven't done step 6)
 
