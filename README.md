@@ -25,5 +25,5 @@
 
 7 `alias ntree="python3 diary.py"`(if linux only)
 
-8 `ntree -h` (replace `ntree` with `python3 diary.py` if you haven't done step 6)
+8 `ntree -h` (replace `ntree` with `python3 main.py` if you haven't done step 6)
 
