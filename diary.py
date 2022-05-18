@@ -12,10 +12,10 @@ def ntree_help():
     -n "text here" create a new entry
     -l list entries(max=100)
     -t list today's entries only
-    -d [date] list entries of a specific date
-    --nostalgia [delay(default=0.5s)] shows all your entries one by one in chronological order"""
+    -d [date] list entries of a specific date, eg: -d 2022-03-16
+    --nostalgia [delay(default=2s)] shows all your entries one by one in chronological order"""
     print(text)
-    sys.exit()
+    
 
 
 
