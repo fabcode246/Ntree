@@ -21,7 +21,9 @@
 
 5 `cd Ntree/`
 
-6 `alias ntree="python3 diary.py"`(if linux only)
+6 `python3 makedatabase.py`
 
-7 `ntree -h` (replace `ntree` with `python3 diary.py` if ya haven't done step 6)
+7 `alias ntree="python3 diary.py"`(if linux only)
+
+8 `ntree -h` (replace `ntree` with `python3 diary.py` if you haven't done step 6)
 
