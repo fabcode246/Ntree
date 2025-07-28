@@ -1,49 +1,54 @@
-# Ntree
-
-#import sys
 import datetime
-
-
+from typing import Optional
 
 def ntree_help():
-    text = """DIARY
-    usage: diary -h [options]
-    -h help message
-    -n "text here" create a new entry
-    -l list entries(max=100)
-    -t list today's entries only
-    -d [date] list entries of a specific date, eg: -d 2022-03-16
-    --nostalgia [delay(default=2s)] shows all your entries one by one in chronological order"""
+    text = """
+Ntree - Your Command Line Diary
+
+Usage: diary [options] [arguments]
+
+Basic Commands:
+  -h, --help             Show this help message
+  -n "text"              Create a new entry
+  -l                     List all entries (latest 100)
+  -t                     Show today's entries
+  -d YYYY-MM-DD          Show entries for specific date
+
+Advanced Features:
+  --search "keyword"     Search entries containing keyword
+  --fav                  Mark last entry as favorite
+  --list-fav             List favorite entries
+  --nostalgia [delay]    Show all entries chronologically with delay
+                         (default delay: 2 seconds)
+
+Examples:
+  diary -n "Had a great day!"
+  diary -d 2024-01-15
+  diary --search "meeting"
+  diary --nostalgia 1.5
+"""
     print(text)
-    
 
-
-
-# def text_maker:
-
-# combine date and time into datetime before
 class Entry:
-    def __init__(self, text, dt=datetime.datetime.now(), fav=False):
-        self.text = str(text)
-        self.dt = dt
-        self.time = dt.time()
-        self.date = dt.date()
+    def __init__(self, text: str, dt: Optional[datetime.datetime] = None, fav: bool = False):
+        if not text or not text.strip():
+            raise ValueError("Entry text cannot be empty")
+            
+        self.text = text.strip()
+        self.dt = dt or datetime.datetime.now()
+        self.time = self.dt.time()
+        self.date = self.dt.date()
         self.fav = fav
 
-'''if len(sys.argv) < 2:
-    help()
-elif sys.argv[1] in ("-h", "--help"):
-    help()
-elif sys.argv[1] == "-n":
-    set_entry(Entry(text=sys.argv[2]))
-    print("new entry created!!!")
-    sys.exit()
-elif sys.argv[1] == "-t":
-    text = ""
-    entries = get_entry(date=datetime.date.today())
-    for e in entries:
-        text += f"[{e.time}] {e.text}"
-    print(text)
-    sys.exit()
+    def __str__(self) -> str:
+        return f"[{self.date}]({self.time.strftime('%H:%M:%S')}) {self.text}"
 
-'''
+    def format_with_time(self) -> str:
+        return f"[{self.time.strftime('%H:%M:%S')}] {self.text}"
+
+    def format_with_date(self) -> str:
+        return f"[{self.date}] {self.text}"
+
+    def format_full(self) -> str:
+        fav_mark = "★ " if self.fav else ""
+        return f"[{self.date}]({self.time.strftime('%H:%M:%S')}) {fav_mark}{self.text}"

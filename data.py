@@ -1,54 +1,97 @@
 import sqlite3
 import datetime
-
+from typing import List, Optional
 from diary import Entry
 
-def set_entry(e):
-	conn = sqlite3.connect("entries.db")
-	c = conn.cursor()
+class DiaryDatabase:
+    def __init__(self, db_path: str = "entries.db"):
+        self.db_path = db_path
 
-	x = "INSERT INTO entry (content, id, d, t, fav) VALUES(?, ?, ?, ?, ?)"
+    def _get_connection(self) -> sqlite3.Connection:
+        return sqlite3.connect(self.db_path)
 
-	print(f"{e.date.isoformat()}{e.time.isoformat()}")
+    def add_entry(self, entry: Entry) -> bool:
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "INSERT INTO entry (content, id, d, t, fav) VALUES (?, ?, ?, ?, ?)",
+                    (entry.text,
+                     f"{entry.date.isoformat()}{entry.time.isoformat()}",
+                     entry.date.isoformat(),
+                     entry.time.isoformat(),
+                     1 if entry.fav else 0)
+                )
+                return True
+        except sqlite3.Error as e:
+            print(f"Error adding entry: {e}")
+            return False
 
-	y = (e.text, f"{e.date.isoformat()}{e.time.isoformat()}", e.date.isoformat(), e.time.isoformat(), 1 if e.fav else 0)
+    def get_entries(self,
+                    entry_id: Optional[str] = None,
+                    date: Optional[datetime.date] = None,
+                    fav: bool = False,
+                    limit: int = 100,
+                    first: bool = False) -> List[Entry]:
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                query = "SELECT * FROM entry"
+                params = []
 
-	c.execute(x,y)
-	conn.commit()
-	conn.close()
+                if date:
+                    query += " WHERE d = ?"
+                    params.append(date.isoformat())
+                elif entry_id:
+                    query += " WHERE id = ?"
+                    params.append(entry_id)
+                elif fav:
+                    query += " WHERE fav = 1"
 
-def get_entry(entry_id=None, limit=100, date=None, fav=False, first=False):
-	conn = sqlite3.connect("entries.db")
-	c = conn.cursor()
+                cursor.execute(query, params)
+                rows = cursor.fetchall()
 
-	if date != None:
-		print(date.isoformat())
-		c.execute(f"SELECT * FROM entry WHERE d={date.isoformat()}")
-		fetched = c.fetchall()
-	if entry_id != None:
-		c.execute(f"SELECT * FROM entry WHERE id={entry_id}")
-		fetched = c.fetchall()
-	if fav:
-		c.execute(f"SELECT * FROM entry WHERE fav={1 if fav else 0}")
-		fetched = c.fetchall()
-	else:
-		c.execute(f'SELECT * FROM entry')
-		fetched = c.fetchall()
+                if first:
+                    rows = rows[:limit]
+                else:
+                    rows = rows[-limit:]
 
-	if first:
-		fetched = fetched[:limit]
-	else:
-		fetched = fetched[-1 * limit:]
+                return [
+                    Entry(
+                        text=row[0],
+                        dt=datetime.datetime.combine(
+                            datetime.date.fromisoformat(row[2]),
+                            datetime.time.fromisoformat(row[3])
+                        ),
+                        fav=bool(row[4])
+                    ) for row in rows
+                ]
+        except sqlite3.Error as e:
+            print(f"Error retrieving entries: {e}")
+            return []
 
-	conn.close()
+    def search_entries(self, keyword: str, limit: int = 100) -> List[Entry]:
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT * FROM entry WHERE content LIKE ? ORDER BY d DESC, t DESC LIMIT ?",
+                    (f"%{keyword}%", limit)
+                )
+                rows = cursor.fetchall()
+                return [
+                    Entry(
+                        text=row[0],
+                        dt=datetime.datetime.combine(
+                            datetime.date.fromisoformat(row[2]),
+                            datetime.time.fromisoformat(row[3])
+                        ),
+                        fav=bool(row[4])
+                    ) for row in rows
+                ]
+        except sqlite3.Error as e:
+            print(f"Error searching entries: {e}")
+            return []
 
-	entry_list = []
-	for i in fetched:
-		date = datetime.date.fromisoformat(i[2])
-		time = datetime.time.fromisoformat(i[3])
-		dt = datetime.datetime.combine(date, time)
-		fav = False if i[4] == 0 else True
-		entry = Entry(i[0], dt, fav)
-		entry_list.append(entry)
-
-	return entry_list
+# Create a global instance for easy access
+db = DiaryDatabase()
