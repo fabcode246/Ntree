@@ -23,7 +23,7 @@ Ntree is a lightweight, command-line diary application that allows you to quickl
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/ntree.git
+   git clone https://github.com/fabcode246/ntree.git
    cd ntree
    ```
 
@@ -97,4 +97,5 @@ Feel free to submit issues, fork the repository, and create pull requests for an
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
 
